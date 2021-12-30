@@ -1,5 +1,6 @@
 # Import required modules
 import socket
+import sys
 import threading
 import tkinter as tk
 from tkinter import scrolledtext
@@ -63,9 +64,11 @@ def send_message():
 
 
 window = tk.Tk()  # Create window
-window.geometry("600x600")  # Size of window, width x height in pixels
-window.title("1000")
-window.resizable(False, False)  # Not resizable width and height
+window.geometry('600x600')
+window.title('1000')
+window.resizable(False, False)
+
+# Create grid
 window.grid_rowconfigure(0, weight=1)
 window.grid_rowconfigure(1, weight=4)
 window.grid_rowconfigure(2, weight=1)
@@ -91,7 +94,7 @@ message_textbox.pack(side=tk.LEFT, padx=10)
 message_button = tk.Button(bottom_frame, text="Send", font=BUTTON_FONT, fg=DARK_GREY, command=send_message)
 message_button.pack(side=tk.LEFT)
 
-message_box = scrolledtext.ScrolledText(middle_frame, font=SMALL_FONT, bg=MEDIUM_GREY, fg=WHITE)
+message_box = scrolledtext.ScrolledText(middle_frame, font=SMALL_FONT, bg=MEDIUM_GREY, fg=WHITE, width=74, height=32)
 message_box.pack(fill=tk.X)
 message_box.config(state=tk.DISABLED)
 
@@ -101,15 +104,26 @@ def listen_for_messages(client):
     while True:
         message = client.recv(1024).decode('utf-8')
         if message != '':
-            username = message.split(":")[0]
-            content = message.split(":")[1]
+            username = message.split("~")[0]
+            content = message.split("~")[1]
 
             update_messages(f"[{username}] {content}")
         else:
             pass
 
 
+def on_closing():
+    try:
+        message = "!DISCONNECT"
+        client.sendall(message.encode('utf-8'))
+        print("Disconnecting from server")
+    except:
+        print("Was not connected to server")
+    window.destroy()
+
+
 def main():
+    window.protocol("WM_DELETE_WINDOW", on_closing)
     window.mainloop()  # Start tkinter loop to update window
 
 
