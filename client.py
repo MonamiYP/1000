@@ -1,10 +1,13 @@
 # Import required modules
 import socket
-import sys
 import threading
 import tkinter as tk
 from tkinter import scrolledtext
 from tkinter import messagebox
+
+################
+# SERVER = IP address here
+PORT = 5050
 
 # Specify colours and fonts
 DARK_GREY = "#121212"
@@ -18,9 +21,6 @@ BUTTON_FONT = ("Helvetica", 15)
 
 # Creating a socket object
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# Server and port numbers
-SERVER = '127.0.0.1'
-PORT = 5050
 
 
 # Functions for GUI
@@ -120,6 +120,13 @@ def on_closing():
     except:
         print("Was not connected to server")
     window.destroy()
+
+
+def enter(event):
+    send_message()
+
+
+window.bind('<Return>', enter)
 
 
 def main():
